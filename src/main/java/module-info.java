@@ -12,5 +12,6 @@ module project.bachelor {
     requires com.almasb.fxgl.all;
 
     opens project.bachelor to javafx.fxml;
+    opens project.bachelor.controllers to javafx.fxml;
     exports project.bachelor;
 }

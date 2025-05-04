@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="$CONTROLLER_NAME$"
-            prefHeight="400.0" prefWidth="600.0" >
+<AnchorPane prefHeight="1000" prefWidth="1080" styleClass="root" stylesheets="@app-style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.bachelor.MainMenuController">
+
+
+
+    <!-- Заголовок -->
+    <Label fx:id="menuLabel" layoutX="390.0" layoutY="152.0" styleClass="section-title" text="Головне меню" />
+
+    <!-- Кнопки -->
+    <Button fx:id="sellButton" layoutX="390.0" layoutY="250.0" onAction="#onSellClicked" styleClass="menu-button" text="Продаж" />
+    <Button fx:id="receiptButton" layoutX="390" layoutY="360" onAction="#onReceiptClicked" styleClass="menu-button" text="Надходження" />
+    <Button fx:id="warehouseButton" layoutX="390" layoutY="470" onAction="#onWarehouseClicked" styleClass="menu-button" text="Склад" />
+    <Button fx:id="productsButton" layoutX="390" layoutY="580" onAction="#onProductsClicked" styleClass="menu-button" text="Меню&#10;Товарів" />
+    <Button fx:id="cashdeskButton" layoutX="390" layoutY="690" onAction="#onCashdeskClicked" styleClass="menu-button" text="Каса" />
 
 </AnchorPane>
