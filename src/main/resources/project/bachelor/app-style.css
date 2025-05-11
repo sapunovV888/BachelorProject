@@ -42,7 +42,7 @@
     -fx-border-color: black;
     -fx-border-width: 2px;
     -fx-table-cell-border-color: black;
-    -fx-fixed-cell-size: 40px;
+    /* -fx-fixed-cell-size: 40px; ← краще задавати в коді */
 }
 
 /* Візуально чіткий хедер */
@@ -71,7 +71,6 @@
 .table-view .cell {
     -fx-border-color: black;
     -fx-border-width: 1px;
-    -fx-text-fill: black;
-    -fx-alignment: center;
-    -fx-padding: 4px;
+    -fx-text-fill: black; /* мінімум */
 }
+

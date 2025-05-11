@@ -1,17 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.ComboBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="1000" prefWidth="1080" styleClass="root" stylesheets="@app-style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.bachelor.controllers.SellController">
-
-
+<AnchorPane prefHeight="1000" prefWidth="1080" styleClass="root" stylesheets="@app-style.css" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.bachelor.controllers.SellController">
 
     <!-- Заголовок -->
     <Label fx:id="menuLabel" layoutX="456.0" layoutY="46.0" styleClass="section-title" text="Продаж" />
@@ -21,18 +13,25 @@
     <Button fx:id="deleteButton" layoutX="22.0" layoutY="598.0" onAction="#onDeleteClicked" styleClass="menu-button" text="Видалити" />
     <Button fx:id="endButton" layoutX="22.0" layoutY="702.0" onAction="#onEndClicked" styleClass="menu-button" text="Завершити операцію" />
     <Button fx:id="toMenuButton" layoutX="22.0" layoutY="806.0" onAction="#onToMenuClicked" styleClass="menu-button" text="Головне Меню" />
-   <TableView layoutX="344.0" layoutY="131.0" prefHeight="715.0" prefWidth="723.0" styleClass="table-view">
-     <columns>
-       <TableColumn prefWidth="50.0" text="N" />
-       <TableColumn prefWidth="209.0" text="Категорія" />
-         <TableColumn prefWidth="283.0" text="Назва" />
-         <TableColumn prefWidth="62.0" text="Ціна" />
-         <TableColumn prefWidth="118.0" text="Кількіть у кошику " />
-     </columns>
-   </TableView>
-   <TextField styleClass="text-field" layoutX="22.0" layoutY="303.0" prefHeight="62.0" prefWidth="300.0" text="Введіть кількість" />
-   <TextField styleClass="text-field" layoutX="22.0" layoutY="218.0" prefHeight="62.0" prefWidth="300.0" text="Введіть назву товару " />
-   <CheckBox layoutX="344.0" layoutY="862.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="268.0" text="Показати тільки присутні у кошику товари" />
-   <ComboBox layoutX="22.0" layoutY="131.0" prefHeight="62.0" prefWidth="300.0" promptText="Оберіть категорію" />
 
+    <!-- Таблиця -->
+    <TableView fx:id="productTable" layoutX="344.0" layoutY="131.0" prefHeight="715.0" prefWidth="723.0" styleClass="table-view">
+
+        <columns>
+            <TableColumn fx:id="idColumn" prefWidth="55.0" text="N" />
+            <TableColumn fx:id="categoryColumn" prefWidth="204.0" text="Категорія" />
+            <TableColumn fx:id="nameColumn" prefWidth="283.0" text="Назва" />
+            <TableColumn fx:id="priceColumn" prefWidth="62.0" text="Ціна" />
+            <TableColumn fx:id="inCartColumn" prefWidth="118.0" text="Кількість у кошику" />
+        </columns>
+    </TableView>
+
+    <!-- Поля вводу -->
+    <ComboBox fx:id="categoryComboBox" layoutX="22.0" layoutY="131.0" prefHeight="62.0" prefWidth="300.0" promptText="Оберіть категорію" />
+    <TextField fx:id="productNameField" layoutX="22.0" layoutY="218.0" prefHeight="62.0" prefWidth="300.0" promptText="Введіть назву товару" styleClass="text-field" />
+    <TextField fx:id="quantityField" layoutX="22.0" layoutY="303.0" prefHeight="62.0" prefWidth="300.0" promptText="Введіть кількість" styleClass="text-field" />
+
+    <!-- Чекбокс та сума -->
+    <CheckBox fx:id="showCartOnlyCheckBox" layoutX="344.0" layoutY="862.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="300.0" text="Показати тільки товари у кошику" />
+    <Label fx:id="totalLabel" layoutX="700.0" layoutY="862.0" styleClass="section-title" text="Сума: 0.00 грн" />
 </AnchorPane>

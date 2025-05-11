@@ -10,8 +10,10 @@ module project.bachelor {
     requires org.kordamp.bootstrapfx.core;
     requires eu.hansolo.tilesfx;
     requires com.almasb.fxgl.all;
+    requires java.sql;
 
     opens project.bachelor to javafx.fxml;
     opens project.bachelor.controllers to javafx.fxml;
+    opens project.bachelor.models to javafx.base;
     exports project.bachelor;
 }
