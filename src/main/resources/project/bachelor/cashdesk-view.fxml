@@ -1,31 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane prefHeight="1000" prefWidth="1080" styleClass="root" stylesheets="@app-style.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="project.bachelor.controllers.CashDeskController">
-
-
+<AnchorPane prefHeight="1000" prefWidth="1080" styleClass="root" stylesheets="@app-style.css"
+            xmlns="http://javafx.com/javafx/21"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="project.bachelor.controllers.CashDeskController">
 
     <!-- Заголовок -->
     <Label fx:id="menuLabel" layoutX="494.0" layoutY="45.0" styleClass="section-title" text="Каса" />
 
     <!-- Кнопки -->
-    <Button fx:id="openCashDeskButton" layoutX="22.0" layoutY="544.0" onAction="#onOpenCashDeskClicked" styleClass="menu-button" text="Відкрити касу" />
-    <Button fx:id="closeCashDeskButton" layoutX="22.0" layoutY="650.0" onAction="#onCloseCashDeskClicked" styleClass="menu-button" text="Закрити касу" />
-    <Button fx:id="toMenuButton" layoutX="22.0" layoutY="756.0" onAction="#onToMenuClicked" styleClass="menu-button" text="Головне Меню" />
-    <TableView layoutX="344.0" layoutY="131.0" prefHeight="715.0" prefWidth="723.0" styleClass="table-view">
+    <Button fx:id="openCashDeskButton" layoutX="22.0" layoutY="544.0" onAction="#onOpenCashDeskClicked"
+            styleClass="menu-button" text="Відкрити касу" />
+    <Button fx:id="closeCashDeskButton" layoutX="22.0" layoutY="650.0" onAction="#onCloseCashDeskClicked"
+            styleClass="menu-button" text="Закрити касу" />
+    <Button fx:id="toMenuButton" layoutX="22.0" layoutY="756.0" onAction="#onToMenuClicked"
+            styleClass="menu-button" text="Головне Меню" />
+
+    <!-- Таблиця -->
+    <TableView fx:id="cashTable" layoutX="344.0" layoutY="131.0" prefHeight="715.0" prefWidth="723.0"
+               styleClass="table-view">
         <columns>
-            <TableColumn prefWidth="116.0" text="Дата" />
-            <TableColumn prefWidth="407.0" text="Касир" />
-            <TableColumn prefWidth="195.0" text="Виручка" />
+            <TableColumn fx:id="colDate" prefWidth="116.0" text="Дата" />
+            <TableColumn fx:id="colCashier" prefWidth="407.0" text="Касир" />
+            <TableColumn fx:id="colRevenue" prefWidth="195.0" text="Виручка" />
         </columns>
     </TableView>
-    <TextField alignment="CENTER" layoutX="22.0" layoutY="216.0" prefHeight="62.0" prefWidth="300.0" promptText="Введіть ПІБ касира" styleClass="text-field" />
-    <TextField alignment="CENTER" layoutX="22.0" layoutY="131.0" prefHeight="62.0" prefWidth="300.0" promptText="Введіть дату" styleClass="text-field" />
+
+    <!-- Поля введення -->
+    <TextField fx:id="dateField" alignment="CENTER" layoutX="22.0" layoutY="131.0" prefHeight="62.0"
+               prefWidth="300.0" promptText="Введіть дату" styleClass="text-field" />
+    <TextField fx:id="cashierField" alignment="CENTER" layoutX="22.0" layoutY="216.0" prefHeight="62.0"
+               prefWidth="300.0" promptText="Введіть ПІБ касира" styleClass="text-field" />
 
 </AnchorPane>

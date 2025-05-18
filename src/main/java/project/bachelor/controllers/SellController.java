@@ -307,7 +307,9 @@ public class SellController {
         try (Connection conn = DatabaseConnector.connect()) {
             conn.setAutoCommit(false);
 
-            // Списуємо товари зі складу
+            // Обчислюємо суму продажу
+            double totalRevenue = 0.0;
+
             PreparedStatement selectCart = conn.prepareStatement(
                     "SELECT product_id, quantity FROM cart_items"
             );
@@ -315,25 +317,44 @@ public class SellController {
 
             while (rs.next()) {
                 int productId = rs.getInt("product_id");
-                int cartQty = rs.getInt("quantity");
+                int quantity = rs.getInt("quantity");
 
+                // Отримуємо ціну товару
+                PreparedStatement getPrice = conn.prepareStatement(
+                        "SELECT price FROM products WHERE id = ?"
+                );
+                getPrice.setInt(1, productId);
+                ResultSet priceRs = getPrice.executeQuery();
+                if (priceRs.next()) {
+                    double price = priceRs.getDouble("price");
+                    totalRevenue += price * quantity;
+                }
+
+                // Списуємо зі складу
                 PreparedStatement updateStock = conn.prepareStatement(
                         "UPDATE products SET stock_quantity = stock_quantity - ? WHERE id = ?"
                 );
-                updateStock.setInt(1, cartQty);
+                updateStock.setInt(1, quantity);
                 updateStock.setInt(2, productId);
                 updateStock.executeUpdate();
             }
+
+            // Додаємо виручку до каси
+            PreparedStatement updateRevenue = conn.prepareStatement(
+                    "UPDATE cash_register SET revenue = revenue + ? WHERE date = ? AND is_open = TRUE"
+            );
+            updateRevenue.setDouble(1, totalRevenue);
+            updateRevenue.setString(2, java.time.LocalDate.now().toString());
+            updateRevenue.executeUpdate();
 
             // Очищення кошика
             conn.prepareStatement("DELETE FROM cart_items").executeUpdate();
             conn.commit();
 
-            // Очищення полів
             productNameField.clear();
             quantityField.clear();
 
-            showAlert("Операцію завершено. Товари списано, кошик очищено.", Alert.AlertType.INFORMATION);
+            showAlert("Операцію завершено. Кошик очищено. Додано до каси: " + totalRevenue + " грн", Alert.AlertType.INFORMATION);
             loadAllProducts();
             updateTotalLabel();
 
@@ -341,6 +362,8 @@ public class SellController {
             showAlert("Помилка завершення операції: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
+
+
 
 
     @FXML

@@ -1,75 +1,158 @@
 package project.bachelor.controllers;
 
-import java.net.URL;
-import java.util.ResourceBundle;
-import javafx.event.ActionEvent;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import project.bachelor.DatabaseConnector;
+import project.bachelor.models.CashDeskModel;
+
+import java.net.URL;
+import java.sql.*;
+import java.time.LocalDate;
+import java.util.ResourceBundle;
 
 public class CashDeskController {
 
-    @FXML
-    private ResourceBundle resources;
+    @FXML private ResourceBundle resources;
+    @FXML private URL location;
+
+    @FXML private Button openCashDeskButton, closeCashDeskButton, toMenuButton;
+    @FXML private TableView<CashDeskModel> cashTable;
+    @FXML private TableColumn<CashDeskModel, String> colDate, colCashier;
+    @FXML private TableColumn<CashDeskModel, Double> colRevenue;
+    @FXML private TextField dateField, cashierField;
+
+    private final ObservableList<CashDeskModel> cashList = FXCollections.observableArrayList();
 
     @FXML
-    private URL location;
+    void initialize() {
+        setupTableColumns();
+        loadCashData();
 
-    @FXML
-    private Button closeCashDeskButton;
+        // Встановлення сьогоднішньої дати та блокування поля
+        dateField.setText(LocalDate.now().toString());
+        dateField.setEditable(false);
+    }
 
-    @FXML
-    private Label menuLabel;
+    private void setupTableColumns() {
+        colDate.setCellValueFactory(new PropertyValueFactory<>("date"));
+        colCashier.setCellValueFactory(new PropertyValueFactory<>("cashierName"));
+        colRevenue.setCellValueFactory(new PropertyValueFactory<>("revenue"));
+        cashTable.setItems(cashList);
+    }
 
-    @FXML
-    private Button openCashDeskButton;
+    private void loadCashData() {
+        cashList.clear();
 
-    @FXML
-    private Button toMenuButton;
+        try (Connection conn = DatabaseConnector.connect();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM cash_register")) {
 
-    @FXML
-    void onCloseCashDeskClicked(ActionEvent event) {
+            while (rs.next()) {
+                cashList.add(new CashDeskModel(
+                        rs.getString("date"),
+                        rs.getString("cashier_name"),
+                        rs.getDouble("revenue")
+                ));
+            }
 
+        } catch (SQLException e) {
+            showAlert("Помилка завантаження даних: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
-    void onOpenCashDeskClicked(ActionEvent event) {
+    void onOpenCashDeskClicked() {
+        String date = dateField.getText().trim();
+        String cashier = cashierField.getText().trim();
 
+        if (cashier.isEmpty()) {
+            showAlert("Введіть ПІБ касира!", Alert.AlertType.WARNING);
+            return;
+        }
+
+        try (Connection conn = DatabaseConnector.connect()) {
+            // Перевірка: чи вже відкрита каса з таким ПІБ на цю ж дату
+            PreparedStatement checkStmt = conn.prepareStatement(
+                    "SELECT * FROM cash_register WHERE date = ? AND cashier_name = ?"
+            );
+            checkStmt.setString(1, date);
+            checkStmt.setString(2, cashier);
+            ResultSet rs = checkStmt.executeQuery();
+
+            if (rs.next()) {
+                showAlert("Цей касир вже відкривав касу на цю дату!", Alert.AlertType.WARNING);
+                return;
+            }
+
+            PreparedStatement stmt = conn.prepareStatement(
+                    "INSERT INTO cash_register (date, cashier_name, revenue, is_open) VALUES (?, ?, 0.0, TRUE)"
+            );
+            stmt.setString(1, date);
+            stmt.setString(2, cashier);
+            stmt.executeUpdate();
+
+            showAlert("Касу відкрито!", Alert.AlertType.INFORMATION);
+            loadCashData();
+        } catch (SQLException e) {
+            showAlert("Помилка відкриття каси: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+
+
+
+    @FXML
+    void onCloseCashDeskClicked() {
+        String date = dateField.getText().trim();
+
+        try (Connection conn = DatabaseConnector.connect()) {
+            // Оновити is_open на FALSE
+            PreparedStatement updateStmt = conn.prepareStatement(
+                    "UPDATE cash_register SET is_open = FALSE WHERE date = ? AND is_open = TRUE"
+            );
+            updateStmt.setString(1, date);
+            int affectedRows = updateStmt.executeUpdate();
+
+            if (affectedRows > 0) {
+                showAlert("Касу закрито!", Alert.AlertType.INFORMATION);
+            } else {
+                showAlert("Каса вже була закрита або не існує!", Alert.AlertType.WARNING);
+            }
+
+            loadCashData();
+
+        } catch (SQLException e) {
+            showAlert("Помилка при закритті каси: " + e.getMessage(), Alert.AlertType.ERROR);
+        }
     }
 
     @FXML
-    void onToMenuClicked(ActionEvent event) {
-
+    void onToMenuClicked(javafx.event.ActionEvent event) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/project/bachelor/main-view.fxml"));
             Parent root = loader.load();
             Stage stage = new Stage();
-            stage.setTitle("Головне меню");
             stage.setScene(new Scene(root));
+            stage.setTitle("Головне меню");
             stage.show();
-
-            // Закриваємо поточне вікно
-            Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            currentStage.close();
-
+            ((Stage) ((Node) event.getSource()).getScene().getWindow()).close();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
-    @FXML
-    void initialize() {
-        assert closeCashDeskButton != null : "fx:id=\"closeCashDeskButton\" was not injected: check your FXML file 'cashdesk-view.fxml'.";
-        assert menuLabel != null : "fx:id=\"menuLabel\" was not injected: check your FXML file 'cashdesk-view.fxml'.";
-        assert openCashDeskButton != null : "fx:id=\"openCashDeskButton\" was not injected: check your FXML file 'cashdesk-view.fxml'.";
-        assert toMenuButton != null : "fx:id=\"toMenuButton\" was not injected: check your FXML file 'cashdesk-view.fxml'.";
-
+    private void showAlert(String msg, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle("Інформація");
+        alert.setHeaderText(null);
+        alert.setContentText(msg);
+        alert.showAndWait();
     }
-
 }

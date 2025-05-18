@@ -257,7 +257,7 @@ public class ProductsController {
                     return;
                 }
                 double price = Double.parseDouble(priceText);
-                
+
                 Integer categoryId = categoryMap.get(selectedCategory);
                 if (categoryId == null) {
                     showAlert("Оберіть конкретну категорію для редагування!", Alert.AlertType.WARNING);
