@@ -11,7 +11,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import project.bachelor.DatabaseConnector;
-import project.bachelor.models.ProductsModel;
+import project.bachelor.models.SellModel;
 
 import java.net.URL;
 import java.sql.*;
@@ -30,14 +30,14 @@ public class SellController {
     @FXML private Button toMenuButton;
 
     @FXML private Label menuLabel;
-    @FXML private TableView<ProductsModel> productTable;
+    @FXML private TableView<SellModel> productTable;
     @FXML private ComboBox<String> categoryComboBox;
     @FXML private TextField productNameField;
     @FXML private TextField quantityField;
     @FXML private CheckBox showCartOnlyCheckBox;
     @FXML private Label totalLabel;
 
-    private final ObservableList<ProductsModel> productList = FXCollections.observableArrayList();
+    private final ObservableList<SellModel> productList = FXCollections.observableArrayList();
     private final Map<String, Integer> categoryMap = new HashMap<>();
 
     @FXML
@@ -50,7 +50,7 @@ public class SellController {
 
 
         productTable.setOnMouseClicked(event -> {
-            ProductsModel selected = productTable.getSelectionModel().getSelectedItem();
+            SellModel selected = productTable.getSelectionModel().getSelectedItem();
             if (selected != null) {
                 productNameField.setText(selected.getName());
             }
@@ -123,7 +123,7 @@ public class SellController {
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
-                productList.add(new ProductsModel(
+                productList.add(new SellModel(
                         rs.getInt("id"),
                         rs.getString("category"),
                         rs.getString("name"),
@@ -140,7 +140,7 @@ public class SellController {
         }
     }
 
-    private ProductsModel findProductByName(String name) {
+    private SellModel findProductByName(String name) {
         return productList.stream()
                 .filter(p -> p.getName().equalsIgnoreCase(name.trim()))
                 .findFirst()
@@ -162,7 +162,7 @@ public class SellController {
              ResultSet rs = stmt.executeQuery()) {
 
             while (rs.next()) {
-                productList.add(new ProductsModel(
+                productList.add(new SellModel(
                         rs.getInt("id"),
                         rs.getString("category"),
                         rs.getString("name"),
@@ -181,7 +181,7 @@ public class SellController {
 
     @FXML
     private void onAddClicked() {
-        ProductsModel selected = productTable.getSelectionModel().getSelectedItem();
+        SellModel selected = productTable.getSelectionModel().getSelectedItem();
 
         if (selected == null && !productNameField.getText().isEmpty()) {
             selected = findProductByName(productNameField.getText());
@@ -262,7 +262,7 @@ public class SellController {
 
     @FXML
     private void onDeleteClicked() {
-        ProductsModel selected = productTable.getSelectionModel().getSelectedItem();
+        SellModel selected = productTable.getSelectionModel().getSelectedItem();
 
         if (selected == null && !productNameField.getText().isEmpty()) {
             selected = findProductByName(productNameField.getText());
